@@ -1,21 +1,14 @@
 import "./App.css";
-import { useToast } from "./hooks/useToast";
+import ToastExample from "./components/ToastExample";
+import ApiExample from "./components/ApiExample";
 
-function App() {
-  const { showToast } = useToast();
-  const handleShowToast = () => {
-    showToast({
-      message: "Toast created successfully!",
-      severity: "success",
-      duration: 3000,
-    });
-  };
-
+const App = () => {
   return (
     <>
-      <button onClick={handleShowToast}>Show Toast</button>
+      <ToastExample />
+      <ApiExample />
     </>
   );
-}
+};
 
 export default App;
