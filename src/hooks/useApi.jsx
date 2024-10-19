@@ -9,7 +9,7 @@ const useApi = (baseUrl) => {
   const abortController = useRef(new AbortController());
 
   // Function to handle API calls
-  const ApiCall = async (method, requestData = {}, config = {}) => {
+  const ApiCall = async (method, requestData = {}, options = {}) => {
     setLoading(true);
     setError(null);
 
@@ -23,7 +23,7 @@ const useApi = (baseUrl) => {
         url: baseUrl,
         data: requestData,
         signal: abortController.current.signal, // Attach the signal for cancellation
-        ...config,
+        ...options,
       });
       setData(response.data);
     } catch (err) {
@@ -56,17 +56,17 @@ const useApi = (baseUrl) => {
     data,
     loading,
     error,
-    GetData: (config = {}) => ApiCall("GET", {}, config),
-    GetDataById: (id, config = {}) =>
-      ApiCall("GET", {}, { ...config, url: `${baseUrl}/${id}` }),
-    PostData: (requestData, config = {}) =>
-      ApiCall("POST", requestData, config),
-    PutData: (id, requestData, config = {}) =>
-      ApiCall("PUT", requestData, { ...config, url: `${baseUrl}/${id}` }),
-    DeleteData: (id, config = {}) =>
-      ApiCall("DELETE", {}, { ...config, url: `${baseUrl}/${id}` }),
-    PatchData: (id, requestData, config = {}) =>
-      ApiCall("PATCH", requestData, { ...config, url: `${baseUrl}/${id}` }),
+    GetData: (options = {}) => ApiCall("GET", {}, options),
+    GetDataById: (id, options = {}) =>
+      ApiCall("GET", {}, { ...options, url: `${baseUrl}/${id}` }),
+    PostData: (requestData, options = {}) =>
+      ApiCall("POST", requestData, options),
+    PutData: (id, requestData, options = {}) =>
+      ApiCall("PUT", requestData, { ...options, url: `${baseUrl}/${id}` }),
+    DeleteData: (id, options = {}) =>
+      ApiCall("DELETE", {}, { ...options, url: `${baseUrl}/${id}` }),
+    PatchData: (id, requestData, options = {}) =>
+      ApiCall("PATCH", requestData, { ...options, url: `${baseUrl}/${id}` }),
   };
 };
 
