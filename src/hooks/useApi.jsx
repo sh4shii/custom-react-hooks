@@ -1,20 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
+// Custom hook to manage API calls
 const useApi = (baseUrl) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const abortController = useRef(new AbortController());
 
-  const ApiCall = async (method, requestData = {}, options = {}) => {
+  // Function to handle API calls
+  const ApiCall = async (method, requestData = {}, config = {}) => {
     setLoading(true);
     setError(null);
+
+    // Cancel the previous request
+    abortController.current.abort();
+    abortController.current = new AbortController(); // Create a new instance for the next request
+
     try {
       const response = await axios({
         method,
         url: baseUrl,
         data: requestData,
-        ...options,
+        signal: abortController.current.signal, // Attach the signal for cancellation
+        ...config,
       });
       setData(response.data);
     } catch (err) {
@@ -36,29 +45,28 @@ const useApi = (baseUrl) => {
     }
   };
 
+  // Cleanup function to abort requests when the component unmounts
   useEffect(() => {
-    const source = axios.CancelToken.source();
-    ApiCall("GET", {}, { cancelToken: source.token });
     return () => {
-      source.cancel("Operation canceled by the user.");
+      abortController.current.abort();
     };
-  }, [baseUrl]);
+  }, []);
 
   return {
     data,
     loading,
     error,
-    GetData: (options = {}) => ApiCall("GET", {}, options),
-    GetDataById: (id, options = {}) =>
-      ApiCall("GET", {}, { ...options, url: `${baseUrl}/${id}` }),
-    PostData: (requestData, options = {}) =>
-      ApiCall("POST", requestData, options),
-    PutData: (id, requestData, options = {}) =>
-      ApiCall("PUT", requestData, { ...options, url: `${baseUrl}/${id}` }),
-    DeleteData: (id, options = {}) =>
-      ApiCall("DELETE", {}, { ...options, url: `${baseUrl}/${id}` }),
-    PatchData: (id, requestData, options = {}) =>
-      ApiCall("PATCH", requestData, { ...options, url: `${baseUrl}/${id}` }),
+    GetData: (config = {}) => ApiCall("GET", {}, config),
+    GetDataById: (id, config = {}) =>
+      ApiCall("GET", {}, { ...config, url: `${baseUrl}/${id}` }),
+    PostData: (requestData, config = {}) =>
+      ApiCall("POST", requestData, config),
+    PutData: (id, requestData, config = {}) =>
+      ApiCall("PUT", requestData, { ...config, url: `${baseUrl}/${id}` }),
+    DeleteData: (id, config = {}) =>
+      ApiCall("DELETE", {}, { ...config, url: `${baseUrl}/${id}` }),
+    PatchData: (id, requestData, config = {}) =>
+      ApiCall("PATCH", requestData, { ...config, url: `${baseUrl}/${id}` }),
   };
 };
 

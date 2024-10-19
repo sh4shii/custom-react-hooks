@@ -14,6 +14,10 @@ const ApiExample = () => {
     PatchData,
   } = useApi("https://jsonplaceholder.typicode.com/posts");
 
+  useEffect(() => {
+    GetData();
+  }, []);
+
   const handleGetById = async (id) => {
     await GetDataById(id);
   };
