@@ -4,6 +4,7 @@ import ApiExample from "./components/ApiExample";
 import ToggleExample from "./components/ToggleExample";
 import CopyToClipboardExample from "./components/CopyToClipboardExample";
 import LocalStorageExample from "./components/LocalStorageExample";
+import DebounceExample from "./components/DebounceExample";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <ToggleExample />
       <CopyToClipboardExample />
       <LocalStorageExample />
+      <DebounceExample />
     </>
   );
 };
